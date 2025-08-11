@@ -1,0 +1,9 @@
+node_modules/
+apps/api/node_modules/
+apps/api/dist/
+apps/api/.env
+.vercel/
+*.log
+.DS_Store
+
+apps/api/.env

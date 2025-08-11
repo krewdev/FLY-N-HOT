@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId            String   @id @default(uuid())
+  role              Role
+  firstName         String
+  lastName          String
+  email             String   @unique
+  phoneNumber       String   @unique
+  passwordHash      String
+  homeZipCode       String?
+  profilePictureUrl String?
+  stripeCustomerId  String?
+  createdAt         DateTime @default(now())
+
+  pilotProfile      PilotProfile?
+  bookings          Booking[]
+}
+
+model PilotProfile {
+  pilotId                 String     @id @default(uuid())
+  userId                  String     @unique
+  status                  PilotStatus
+  bio                     String?
+  faaLicenseUrl           String?
+  insuranceProofUrl       String?
+  stripeConnectAccountId  String?
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+
+  user                    User       @relation(fields: [userId], references: [userId])
+  flights                 Flight[]
+}
+
+model Flight {
+  flightId                 String       @id @default(uuid())
+  pilotId                  String
+  launchLocation           Json
+  meetupTimestamp          DateTime
+  estimatedDurationMinutes Int
+  pricePerSeat             Float
+  totalSeats               Int
+  seatsReserved            Int          @default(0)
+  description              String?
+  status                   FlightStatus @default(UPCOMING)
+  createdAt                DateTime     @default(now())
+
+  pilot                    PilotProfile @relation(fields: [pilotId], references: [pilotId])
+  bookings                 Booking[]
+}
+
+model Booking {
+  bookingId            String        @id @default(uuid())
+  flightId             String
+  passengerId          String
+  numberOfSeats        Int
+  totalAmountPaid      Float
+  platformFee          Float
+  pilotPayoutAmount    Float
+  paymentStatus        PaymentStatus
+  stripePaymentIntentId String?
+  bookingTimestamp     DateTime      @default(now())
+
+  flight               Flight        @relation(fields: [flightId], references: [flightId])
+  passenger            User          @relation(fields: [passengerId], references: [userId])
+  review               Review?
+}
+
+model Review {
+  reviewId   String   @id @default(uuid())
+  bookingId  String   @unique
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  booking    Booking  @relation(fields: [bookingId], references: [bookingId])
+}
+
+enum Role {
+  PASSENGER
+  PILOT
+  ADMIN
+}
+
+enum PilotStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum FlightStatus {
+  UPCOMING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PAID
+  REFUNDED
+}
+
