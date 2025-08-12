@@ -7,8 +7,32 @@ on:
     branches: [ main ]
 
 jobs:
+  web-preview:
+    if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID_WEB != '' }}
+    runs-on: ubuntu-latest
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.preview-url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy Web Preview to Vercel
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+          working-directory: apps/web
+          vercel-args: ''
+          github-comment: false
+          scope: ''
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.E2E_API_BASE_URL }}
+
   build-and-test:
     runs-on: ubuntu-latest
+    needs: [web-preview]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,15 +65,15 @@ jobs:
         run: npm run build
 
       - name: Install Playwright
-        if: env.E2E_BASE_URL != ''
+        if: ${{ needs.web-preview.outputs.preview-url != '' || env.E2E_BASE_URL != '' }}
         working-directory: apps/web
         run: npx playwright install --with-deps
 
-      - name: Run E2E (against provided base URL)
-        if: env.E2E_BASE_URL != ''
+      - name: Run E2E (against preview or provided base URL)
+        if: ${{ needs.web-preview.outputs.preview-url != '' || env.E2E_BASE_URL != '' }}
         working-directory: apps/web
         env:
-          E2E_BASE_URL: ${{ env.E2E_BASE_URL }}
+          E2E_BASE_URL: ${{ needs.web-preview.outputs.preview-url || env.E2E_BASE_URL }}
         run: npm run e2e:ci
 
 
