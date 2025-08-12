@@ -1,10 +1,11 @@
-/* Minimal augmentation example if needed later
-declare namespace Express {
-  export interface Request {
-    userId?: string;
-    pilotId?: string;
-    roles?: string[];
+import { User } from '@prisma/client';
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+      pilotId?: string;
+      isAuthenticated?: boolean;
+    }
   }
 }
-*/
-

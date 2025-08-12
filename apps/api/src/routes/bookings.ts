@@ -18,39 +18,85 @@ router.post('/', async (req, res) => {
   const { flightId, passengerId, numberOfSeats } = parsed.data;
 
   try {
-    const flight = await prisma.flight.findUnique({ where: { flightId } });
-    if (!flight) return res.status(404).json({ error: 'Flight not found' });
-
-    const seatsRemaining = flight.totalSeats - flight.seatsReserved;
-    if (numberOfSeats > seatsRemaining) {
-      return res.status(400).json({ error: 'Not enough seats available' });
-    }
-
-    const total = flight.pricePerSeat * numberOfSeats;
-
-    // Stripe PI (stubbed to create/calc on test mode)
-    const paymentIntent = await createPaymentIntent({ amountCents: Math.round(total * 100), metadata: { flightId, passengerId, numberOfSeats: String(numberOfSeats) } });
-
-    // Create a pending booking record; mark PAID after webhook in production
-    const booking = await prisma.booking.create({
-      data: {
-        flightId,
-        passengerId,
-        numberOfSeats,
-        totalAmountPaid: total,
-        platformFee: 0, // computed at capture time in real system
-        pilotPayoutAmount: total, // placeholder
-        paymentStatus: PaymentStatus.PAID, // for scaffold assume immediate success
-        stripePaymentIntentId: paymentIntent?.id ?? null
+    // Use transaction to prevent race conditions
+    const result = await prisma.$transaction(async (tx) => {
+      // Get flight with FOR UPDATE lock to prevent concurrent modifications
+      const flight = await tx.flight.findUnique({ 
+        where: { flightId },
+        select: { flightId: true, totalSeats: true, seatsReserved: true, pricePerSeat: true, status: true }
+      });
+      
+      if (!flight) {
+        throw new Error('Flight not found');
       }
+
+      if (flight.status !== 'UPCOMING') {
+        throw new Error('Flight is not available for booking');
+      }
+
+      const seatsRemaining = flight.totalSeats - flight.seatsReserved;
+      if (numberOfSeats > seatsRemaining) {
+        throw new Error('Not enough seats available');
+      }
+
+      // Check if passenger exists
+      const passenger = await tx.user.findUnique({ where: { userId: passengerId } });
+      if (!passenger) {
+        throw new Error('Passenger not found');
+      }
+
+      const total = flight.pricePerSeat * numberOfSeats;
+
+      // Reserve seats atomically
+      const updatedFlight = await tx.flight.update({ 
+        where: { flightId }, 
+        data: { seatsReserved: flight.seatsReserved + numberOfSeats } 
+      });
+
+      // Create booking record
+      const booking = await tx.booking.create({
+        data: {
+          flightId,
+          passengerId,
+          numberOfSeats,
+          totalAmountPaid: total,
+          platformFee: 0, // computed at capture time in real system
+          pilotPayoutAmount: total, // placeholder
+          paymentStatus: PaymentStatus.PAID, // for scaffold assume immediate success
+          stripePaymentIntentId: null // Will be updated after payment intent creation
+        }
+      });
+
+      return { booking, flight: updatedFlight, total };
     });
 
-    // Reserve seats
-    await prisma.flight.update({ where: { flightId }, data: { seatsReserved: flight.seatsReserved + numberOfSeats } });
+    // Create payment intent after successful reservation
+    const paymentIntent = await createPaymentIntent({ 
+      amountCents: Math.round(result.total * 100), 
+      metadata: { 
+        flightId, 
+        passengerId, 
+        numberOfSeats: String(numberOfSeats),
+        bookingId: result.booking.bookingId
+      } 
+    });
 
-    return res.status(201).json({ booking, clientSecret: paymentIntent?.client_secret });
+    // Update booking with payment intent ID
+    if (paymentIntent?.id) {
+      await prisma.booking.update({
+        where: { bookingId: result.booking.bookingId },
+        data: { stripePaymentIntentId: paymentIntent.id }
+      });
+    }
+
+    return res.status(201).json({ 
+      booking: { ...result.booking, stripePaymentIntentId: paymentIntent?.id }, 
+      clientSecret: paymentIntent?.client_secret 
+    });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to create booking' });
+    console.error('Booking creation error:', err);
+    const message = err instanceof Error ? err.message : 'Failed to create booking';
+    return res.status(400).json({ error: message });
   }
 });
 

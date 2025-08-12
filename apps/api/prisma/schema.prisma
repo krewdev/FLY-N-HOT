@@ -54,6 +54,11 @@ model Flight {
 
   pilot                    PilotProfile @relation(fields: [pilotId], references: [pilotId])
   bookings                 Booking[]
+
+  @@index([meetupTimestamp])
+  @@index([status])
+  @@index([pilotId])
+  @@index([createdAt])
 }
 
 model Booking {
@@ -65,12 +70,17 @@ model Booking {
   platformFee          Float
   pilotPayoutAmount    Float
   paymentStatus        PaymentStatus
-  stripePaymentIntentId String?
+  stripePaymentIntentId String?      @unique
   bookingTimestamp     DateTime      @default(now())
 
   flight               Flight        @relation(fields: [flightId], references: [flightId])
   passenger            User          @relation(fields: [passengerId], references: [userId])
   review               Review?
+
+  @@index([flightId])
+  @@index([passengerId])
+  @@index([paymentStatus])
+  @@index([bookingTimestamp])
 }
 
 model Review {
@@ -81,6 +91,9 @@ model Review {
   createdAt  DateTime @default(now())
 
   booking    Booking  @relation(fields: [bookingId], references: [bookingId])
+
+  @@index([rating])
+  @@index([createdAt])
 }
 
 model NotificationSubscription {

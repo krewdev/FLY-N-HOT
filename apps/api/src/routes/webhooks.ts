@@ -14,7 +14,7 @@ router.post('/stripe', async (req, res) => {
     return res.status(200).json({ received: true });
   }
   try {
-    const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2024-04-10' });
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: env.STRIPE_API_VERSION as any });
     const signature = req.headers['stripe-signature'] as string | undefined;
     if (!signature) return res.status(400).send('Missing signature');
 

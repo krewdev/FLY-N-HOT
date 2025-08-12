@@ -1,6 +1,6 @@
-# Let's Go Fly — Monorepo (Backend scaffold)
+# FLY-IN-HIGH — Monorepo (Backend scaffold)
 
-This repository contains a production-ready scaffold for the Let's Go Fly platform. It includes:
+This repository contains a production-ready scaffold for the FLY-IN-HIGH platform. It includes:
 
 - API service (Node.js + TypeScript + Express + Prisma)
 - PostgreSQL and Redis via Docker Compose
@@ -67,7 +67,7 @@ You should see `{ "status": "ok" }`.
 `apps/api/.env` (copy from `.env.example`):
 
 ```
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/lets_go_fly?schema=public
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fly_in_high?schema=public
 REDIS_URL=redis://localhost:6379
 
 JWT_SECRET=change_me

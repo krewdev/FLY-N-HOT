@@ -2,12 +2,12 @@ version: "3.8"
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: lets-go-fly-postgres
+    container_name: fly-in-high-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lets_go_fly
+      POSTGRES_DB: fly_in_high
     ports:
       - "5432:5432"
     volumes:
@@ -15,7 +15,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: lets-go-fly-redis
+    container_name: fly-in-high-redis
     restart: unless-stopped
     ports:
       - "6379:6379"

@@ -63,26 +63,81 @@ router.post('/pilot/register', async (req, res) => {
 
 // Admin: list pilot applications (stub auth)
 router.get('/pilot/applications', async (_req, res) => {
-  if (env.ADMIN_SECRET && _req.headers['x-admin-secret'] !== env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  // Require admin secret - if not configured, deny access
+  if (!env.ADMIN_SECRET) {
+    return res.status(503).json({ error: 'Admin authentication not configured' });
+  }
+  if (_req.headers['x-admin-secret'] !== env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized - invalid admin secret' });
+  }
+  
   try {
-    const apps = await prisma.pilotApplication.findMany({ orderBy: { createdAt: 'desc' } });
+    const apps = await prisma.pilotApplication.findMany({ 
+      orderBy: { createdAt: 'desc' },
+      select: {
+        applicationId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phoneNumber: true,
+        zipCode: true,
+        status: true,
+        pilotLicenseNumber: true,
+        pilotLicenseState: true,
+        licenseConfirmed: true,
+        licenseConfirmedAt: true,
+        createdAt: true
+      }
+    });
     return res.json(apps);
   } catch (err) {
+    console.error('Failed to list pilot applications:', err);
     return res.status(500).json({ error: 'Failed to list applications' });
   }
 });
 
 // Admin: manually confirm a pilot's license number
 router.post('/pilot/applications/:applicationId/confirm-license', async (req, res) => {
-  if (env.ADMIN_SECRET && req.headers['x-admin-secret'] !== env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  // Require admin secret - if not configured, deny access
+  if (!env.ADMIN_SECRET) {
+    return res.status(503).json({ error: 'Admin authentication not configured' });
+  }
+  if (req.headers['x-admin-secret'] !== env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized - invalid admin secret' });
+  }
+
+  const { applicationId } = req.params;
+  if (!applicationId) {
+    return res.status(400).json({ error: 'Application ID is required' });
+  }
+
   try {
-    const updated = await prisma.pilotApplication.update({
-      where: { applicationId: req.params.applicationId },
-      data: { licenseConfirmed: true, licenseConfirmedAt: new Date() }
+    // Check if application exists and is not already confirmed
+    const existingApp = await prisma.pilotApplication.findUnique({
+      where: { applicationId }
     });
+    
+    if (!existingApp) {
+      return res.status(404).json({ error: 'Pilot application not found' });
+    }
+    
+    if (existingApp.licenseConfirmed) {
+      return res.status(400).json({ error: 'License already confirmed' });
+    }
+
+    const updated = await prisma.pilotApplication.update({
+      where: { applicationId },
+      data: { 
+        licenseConfirmed: true, 
+        licenseConfirmedAt: new Date(),
+        status: 'VERIFIED'
+      }
+    });
+    
     await notifyPilotApplicationApproved(updated.email, updated.phoneNumber);
     return res.json(updated);
   } catch (err) {
+    console.error('Failed to confirm pilot license:', err);
     return res.status(500).json({ error: 'Failed to confirm license' });
   }
 });

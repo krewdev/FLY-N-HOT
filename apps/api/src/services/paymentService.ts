@@ -14,7 +14,7 @@ export async function createPaymentIntent(input: CreatePaymentIntentInput) {
     return { id: 'pi_dummy', client_secret: 'pi_dummy_secret' } as any;
   }
 
-  const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2024-04-10' });
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: env.STRIPE_API_VERSION as any });
   const intent = await stripe.paymentIntents.create({
     amount: amountCents,
     currency,

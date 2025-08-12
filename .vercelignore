@@ -1,0 +1,11 @@
+node_modules
+.env*
+.git
+*.log
+.DS_Store
+apps/web
+apps/api/src
+apps/api/tsconfig.json
+*.md
+.vscode
+.idea
