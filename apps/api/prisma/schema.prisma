@@ -83,6 +83,49 @@ model Review {
   booking    Booking  @relation(fields: [bookingId], references: [bookingId])
 }
 
+model NotificationSubscription {
+  subscriptionId String   @id @default(uuid())
+  email          String?
+  phoneNumber    String?
+  zipCode        String?
+  createdAt      DateTime @default(now())
+
+  @@index([email])
+  @@index([phoneNumber])
+}
+
+model PilotApplication {
+  applicationId              String   @id @default(uuid())
+  firstName                  String
+  lastName                   String
+  email                      String
+  phoneNumber                String
+  zipCode                    String?
+  status                     PilotApplicationStatus @default(SUBMITTED)
+  stripeIdentitySessionId    String?
+  pilotLicenseNumber         String
+  pilotLicenseState          String
+  licenseConfirmed           Boolean  @default(false)
+  licenseConfirmedAt         DateTime?
+  createdAt                  DateTime @default(now())
+
+  @@index([email])
+  @@index([phoneNumber])
+}
+
+model FeatureFlag {
+  key       String  @id
+  enabled   Boolean @default(false)
+  note      String?
+  updatedAt DateTime @updatedAt
+}
+
+enum PilotApplicationStatus {
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
 enum Role {
   PASSENGER
   PILOT

@@ -8,6 +8,7 @@ import { router as flightsRouter } from './routes/flights.js';
 import { router as pilotFlightsRouter } from './routes/pilotFlights.js';
 import { router as bookingsRouter } from './routes/bookings.js';
 import { router as webhooksRouter } from './routes/webhooks.js';
+import { router as notificationsRouter } from './routes/notifications.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/pilots/flights', pilotFlightsRouter);
 app.use('/', flightsRouter);
 app.use('/bookings', bookingsRouter);
 app.use('/webhooks', webhooksRouter);
+app.use('/notifications', notificationsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });

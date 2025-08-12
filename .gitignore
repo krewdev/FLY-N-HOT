@@ -7,3 +7,5 @@ apps/api/.env
 .DS_Store
 
 apps/api/.env
+
+.vercel
