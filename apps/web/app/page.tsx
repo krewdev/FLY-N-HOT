@@ -2,20 +2,33 @@ import NotifySignup from './components/NotifySignup';
 import Image from 'next/image';
 
 async function fetchFlights() {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
   const url = base.replace(/\/$/, '') + '/flights';
-  const res = await fetch(url, { next: { revalidate: 10 } });
+  
+  const res = await fetch(url, { 
+    next: { revalidate: 10 },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  
   if (!res.ok) {
-    throw new Error('Failed to fetch flights');
+    throw new Error(`Failed to fetch flights: ${res.status} ${res.statusText}`);
   }
+  
   return res.json() as Promise<any[]>;
 }
 
 export default async function HomePage() {
   let flights: any[] = [];
+  let error: string | null = null;
+  
   try {
     flights = await fetchFlights();
-  } catch {}
+  } catch (err) {
+    console.error('Failed to fetch flights:', err);
+    error = err instanceof Error ? err.message : 'Failed to load flights';
+  }
 
   return (
     <main>
@@ -47,8 +60,16 @@ export default async function HomePage() {
           <NotifySignup />
         </div>
         <h2 id="flights" style={{ marginTop: 0 }}>Available Flights</h2>
-      {flights.length === 0 ? (
-        <p>No flights yet.</p>
+      {error ? (
+        <div className="panel pad" style={{ backgroundColor: '#fee', border: '1px solid #fcc', marginBottom: 18 }}>
+          <p style={{ color: '#c33', margin: 0 }}>⚠️ Error loading flights: {error}</p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '0.9em', color: '#666' }}>
+            Please check that the API server is running on the expected URL.
+          </p>
+        </div>
+      ) : null}
+      {flights.length === 0 && !error ? (
+        <p>No flights available yet.</p>
       ) : (
         <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
           {flights.map((f) => (
