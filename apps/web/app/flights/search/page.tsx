@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
 interface Flight {
@@ -47,15 +47,7 @@ export default function FlightSearch() {
     minSeats: 1
   });
 
-  useEffect(() => {
-    loadFlights();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, flights]);
-
-  const loadFlights = async () => {
+  const loadFlights = useCallback(async () => {
     try {
       const response = await fetch('/api/flights');
       
@@ -71,9 +63,9 @@ export default function FlightSearch() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = flights.filter(flight => {
       // Location filter
       if (filters.location && !flight.launchLocation.city.toLowerCase().includes(filters.location.toLowerCase()) &&
@@ -111,7 +103,15 @@ export default function FlightSearch() {
     });
 
     setFilteredFlights(filtered);
-  };
+  }, [filters, flights]);
+
+  useEffect(() => {
+    loadFlights();
+  }, [loadFlights]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleFilterChange = (field: keyof SearchFilters, value: any) => {
     setFilters(prev => ({

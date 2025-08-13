@@ -2,21 +2,27 @@ import NotifySignup from './components/NotifySignup';
 import Image from 'next/image';
 
 async function fetchFlights() {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-  const url = base.replace(/\/$/, '') + '/flights';
-  
-  const res = await fetch(url, { 
-    next: { revalidate: 10 },
-    headers: {
-      'Content-Type': 'application/json'
+  try {
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+    const url = base.replace(/\/$/, '') + '/flights';
+    
+    const res = await fetch(url, { 
+      next: { revalidate: 10 },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch flights: ${res.status} ${res.statusText}`);
     }
-  });
-  
-  if (!res.ok) {
-    throw new Error(`Failed to fetch flights: ${res.status} ${res.statusText}`);
+    
+    return res.json() as Promise<any[]>;
+  } catch (error) {
+    // During build time or when API is unavailable, return empty array
+    console.warn('API not available during build:', error);
+    return [];
   }
-  
-  return res.json() as Promise<any[]>;
 }
 
 export default async function HomePage() {
@@ -69,7 +75,12 @@ export default async function HomePage() {
         </div>
       ) : null}
       {flights.length === 0 && !error ? (
-        <p>No flights available yet.</p>
+        <div className="panel pad" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', marginBottom: 18 }}>
+          <p style={{ margin: 0, color: '#666' }}>No flights available yet.</p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '0.9em', color: '#999' }}>
+            Check back soon for new flight opportunities!
+          </p>
+        </div>
       ) : (
         <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
           {flights.map((f) => (
