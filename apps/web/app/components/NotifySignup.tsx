@@ -78,7 +78,7 @@ export default function NotifySignup() {
 
   return (
     <div className="panel pad">
-      <h2>Get Notified About Hot Air Balloon Flights</h2>
+      <h2 style={{ background: 'linear-gradient(135deg, #ff4757, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>🎈 Get Notified About Hot Air Balloon Flights</h2>
       <p className="muted">
         Subscribe to receive notifications about available flights, special events, and last-minute opportunities in your area.
       </p>

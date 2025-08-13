@@ -141,7 +141,7 @@ export default function PilotRegister() {
   return (
     <main>
       <div className="container">
-        <h1>Pilot Registration</h1>
+        <h1 style={{ background: 'linear-gradient(135deg, #ff4757, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', textAlign: 'center', marginBottom: '32px' }}>🎈 Pilot Registration</h1>
         
         <form onSubmit={handleSubmit} className="panel pad">
           <h2>Personal Information</h2>
