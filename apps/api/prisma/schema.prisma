@@ -22,6 +22,22 @@ model User {
 
   pilotProfile      PilotProfile?
   bookings          Booking[]
+  adminActions      AdminAction[]
+}
+
+model AdminAction {
+  actionId    String      @id @default(uuid())
+  adminId     String
+  actionType  AdminActionType
+  targetId    String      // pilotId or userId
+  details     Json?
+  createdAt   DateTime    @default(now())
+
+  admin       User        @relation(fields: [adminId], references: [userId])
+
+  @@index([adminId])
+  @@index([targetId])
+  @@index([createdAt])
 }
 
 model PilotProfile {
@@ -30,13 +46,16 @@ model PilotProfile {
   status                  PilotStatus
   bio                     String?
   faaLicenseUrl           String?
+  officialIdUrl           String?    // Added for SOW requirement
   insuranceProofUrl       String?
   stripeConnectAccountId  String?
+  stripeAccountStatus     StripeAccountStatus @default(PENDING)
   createdAt               DateTime   @default(now())
   updatedAt               DateTime   @updatedAt
 
   user                    User       @relation(fields: [userId], references: [userId])
   flights                 Flight[]
+  pilotApplications       PilotApplication[]
 }
 
 model Flight {
@@ -50,6 +69,10 @@ model Flight {
   seatsReserved            Int          @default(0)
   description              String?
   status                   FlightStatus @default(UPCOMING)
+  stripeProductId          String?      // Added for Stripe integration
+  stripePriceId            String?      // Added for Stripe integration
+  stripePaymentLinkId      String?      // Added for Stripe integration
+  platformFeePercentage    Float        @default(0.10) // 10% platform fee
   createdAt                DateTime     @default(now())
 
   pilot                    PilotProfile @relation(fields: [pilotId], references: [pilotId])
@@ -121,9 +144,12 @@ model PilotApplication {
   licenseConfirmed           Boolean  @default(false)
   licenseConfirmedAt         DateTime?
   createdAt                  DateTime @default(now())
+  pilotId                    String?
+  pilotProfile               PilotProfile? @relation(fields: [pilotId], references: [pilotId])
 
   @@index([email])
   @@index([phoneNumber])
+  @@index([pilotId])
 }
 
 model FeatureFlag {
@@ -131,6 +157,20 @@ model FeatureFlag {
   enabled   Boolean @default(false)
   note      String?
   updatedAt DateTime @updatedAt
+}
+
+enum AdminActionType {
+  PILOT_APPROVED
+  PILOT_REJECTED
+  PILOT_SUSPENDED
+  SYSTEM_UPDATE
+}
+
+enum StripeAccountStatus {
+  PENDING
+  ACTIVE
+  RESTRICTED
+  DISABLED
 }
 
 enum PilotApplicationStatus {
@@ -149,6 +189,7 @@ enum PilotStatus {
   PENDING
   APPROVED
   REJECTED
+  SUSPENDED
 }
 
 enum FlightStatus {
@@ -158,7 +199,9 @@ enum FlightStatus {
 }
 
 enum PaymentStatus {
+  PENDING
   PAID
+  FAILED
   REFUNDED
 }
 
