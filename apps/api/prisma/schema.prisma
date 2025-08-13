@@ -121,13 +121,17 @@ model Review {
 
 model NotificationSubscription {
   subscriptionId String   @id @default(uuid())
-  email          String?
-  phoneNumber    String?
+  name           String
+  email          String
+  phoneNumber    String
+  birthday       DateTime
+  weight         Int      // Weight in pounds
   zipCode        String?
   createdAt      DateTime @default(now())
 
   @@index([email])
   @@index([phoneNumber])
+  @@index([weight])
 }
 
 model PilotApplication {
@@ -143,6 +147,10 @@ model PilotApplication {
   pilotLicenseState          String
   licenseConfirmed           Boolean  @default(false)
   licenseConfirmedAt         DateTime?
+  // Document uploads
+  governmentIdFrontUrl       String?
+  governmentIdBackUrl        String?
+  faaPilotLicenseUrl        String?
   createdAt                  DateTime @default(now())
   pilotId                    String?
   pilotProfile               PilotProfile? @relation(fields: [pilotId], references: [pilotId])

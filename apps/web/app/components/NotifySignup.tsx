@@ -2,46 +2,204 @@
 
 import { useState } from 'react';
 
-export default function NotifySignup() {
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhone] = useState('');
-  const [zipCode, setZip] = useState('');
-  const [status, setStatus] = useState<string | null>(null);
+interface SignupData {
+  name: string;
+  email: string;
+  phone: string;
+  birthday: string;
+  weight: number;
+  zipCode: string;
+}
 
-  async function submit(e: React.FormEvent) {
+export default function NotifySignup() {
+  const [formData, setFormData] = useState<SignupData>({
+    name: '',
+    email: '',
+    phone: '',
+    birthday: '',
+    weight: 0,
+    zipCode: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('Subscribing...');
+    setLoading(true);
+    setError(null);
+
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-      const url = base.replace(/\/$/, '') + '/notifications/subscribe';
-      const res = await fetch(url, {
+      const response = await fetch('/api/notifications/subscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email || undefined, phoneNumber: phoneNumber || undefined, zipCode: zipCode || undefined })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      const body = await res.json().catch(() => ({}));
-      if (res.ok) {
-        setStatus(body?.alreadySubscribed ? 'You are already subscribed.' : 'Subscribed!');
-        setEmail(''); setPhone(''); setZip('');
-      } else {
-        setStatus(`Error: ${body?.error || res.status}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to subscribe');
       }
-    } catch (err: any) {
-      setStatus(`Error: ${err?.message || 'network'}`);
+
+      setSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        birthday: '',
+        weight: 0,
+        zipCode: ''
+      });
+    } catch (err) {
+      setError('Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleInputChange = (field: keyof SignupData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  if (success) {
+    return (
+      <div className="panel pad" style={{ backgroundColor: '#f0f9ff', border: '1px solid #0ea5e9' }}>
+        <h3 style={{ color: '#0c4a6e', margin: '0 0 8px 0' }}>🎉 Successfully Subscribed!</h3>
+        <p style={{ color: '#0369a1', margin: 0 }}>
+          You&apos;ll be notified about hot air balloon flights in your area. Check your email for confirmation!
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h3>Get notified about new flights</h3>
-      <p className="muted">Leave your email or phone, and we’ll notify you when pilots have openings near you.</p>
-      <form onSubmit={submit} style={{ display: 'grid', gap: 12, maxWidth: 520 }}>
-        <input placeholder="Email (optional)" value={email} onChange={(e) => setEmail(e.target.value)} type="email" style={{ padding: 10 }} />
-        <input placeholder="Phone (optional)" value={phoneNumber} onChange={(e) => setPhone(e.target.value)} type="tel" style={{ padding: 10 }} />
-        <input placeholder="Zip code (optional)" value={zipCode} onChange={(e) => setZip(e.target.value)} style={{ padding: 10 }} />
-        <button type="submit" className="btn btn-primary">Notify Me</button>
+    <div className="panel pad">
+      <h2>Get Notified About Hot Air Balloon Flights</h2>
+      <p className="muted">
+        Subscribe to receive notifications about available flights, special events, and last-minute opportunities in your area.
+      </p>
+      
+      <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+          <div>
+            <label htmlFor="name" className="form-label">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className="form-input"
+              required
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="form-label">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="form-input"
+              required
+              placeholder="your.email@example.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="form-label">
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              className="form-input"
+              required
+              placeholder="(555) 123-4567"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="birthday" className="form-label">
+              Birthday *
+            </label>
+            <input
+              type="date"
+              id="birthday"
+              value={formData.birthday}
+              onChange={(e) => handleInputChange('birthday', e.target.value)}
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="weight" className="form-label">
+              Weight (lbs) * ⚠️
+            </label>
+            <input
+              type="number"
+              id="weight"
+              value={formData.weight || ''}
+              onChange={(e) => handleInputChange('weight', parseInt(e.target.value))}
+              className="form-input"
+              required
+              min="50"
+              max="300"
+              placeholder="150"
+            />
+            <div style={{ fontSize: '0.8em', color: '#dc2626', marginTop: 4 }}>
+              ⚠️ Weight is required for safety - balloons have weight limits to prevent overloading
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="zipCode" className="form-label">
+              ZIP Code
+            </label>
+            <input
+              type="text"
+              id="zipCode"
+              value={formData.zipCode}
+              onChange={(e) => handleInputChange('zipCode', e.target.value)}
+              className="form-input"
+              placeholder="12345"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div style={{ backgroundColor: '#fee', border: '1px solid #fcc', padding: 12, borderRadius: 4, marginTop: 16 }}>
+            <p style={{ color: '#c33', margin: 0 }}>Error: {error}</p>
+          </div>
+        )}
+
+        <div style={{ marginTop: 16 }}>
+          <button
+            type="submit"
+            disabled={loading || !formData.name || !formData.email || !formData.phone || !formData.birthday || !formData.weight}
+            className="btn btn-primary"
+            style={{ width: '100%' }}
+          >
+            {loading ? 'Subscribing...' : 'Subscribe to Notifications'}
+          </button>
+        </div>
+
+        <p style={{ fontSize: '0.8em', color: '#666', marginTop: 12, textAlign: 'center' }}>
+                          We&apos;ll only use your information to send flight notifications. No spam, ever!
+        </p>
       </form>
-      {status && <p style={{ marginTop: 8 }}>{status}</p>}
     </div>
   );
 }

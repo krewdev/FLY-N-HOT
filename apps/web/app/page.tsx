@@ -1,4 +1,5 @@
 import NotifySignup from './components/NotifySignup';
+import CustomerReviews from './components/CustomerReviews';
 import Image from 'next/image';
 
 async function fetchFlights() {
@@ -101,8 +102,11 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
-      )}
+                )}
       </div>
+
+      {/* Customer Reviews Slideshow */}
+      <CustomerReviews />
     </main>
   );
 }
