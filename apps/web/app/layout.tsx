@@ -2,8 +2,8 @@ import NavBar from './components/NavBar';
 import './globals.css';
 
 export const metadata = {
-  title: "FLY 'N' HOT",
-  description: 'Book scenic hot-air balloon flights with local pilots',
+  title: 'fiahab.com',
+  description: 'flying in a hot air balloon',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

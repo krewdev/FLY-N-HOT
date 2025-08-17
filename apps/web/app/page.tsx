@@ -42,8 +42,8 @@ export default async function HomePage() {
       <section className="hero">
         <div className="container">
                   <div className="eyebrow">🎈 Aerial adventures</div>
-        <h1 className="hero-title">FLY &apos;N&apos; HOT</h1>
-        <p className="hero-sub">Book scenic hot‑air balloon flights with trusted local pilots. Reserve your seats and enjoy the view.</p>
+        <h1 className="hero-title">fiahab.com</h1>
+        <p className="hero-sub">flying in a hot air balloon</p>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
             <div className="panel" style={{ borderRadius: 16, overflow: 'hidden' }}>
               <Image

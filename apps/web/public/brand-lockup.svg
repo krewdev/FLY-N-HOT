@@ -20,8 +20,8 @@
 
   <!-- Wordmark -->
   <g transform="translate(72,18)">
-    <text x="0" y="18" font-family="'Montserrat', 'Segoe UI', system-ui, -apple-system, Arial" font-size="22" font-weight="900" fill="url(#textGrad)">FLY 'N' Hot</text>
-    <text x="0" y="38" font-family="'Segoe UI', system-ui, -apple-system, Arial" font-size="11" fill="#A1A8B3">Scenic hot‑air balloon flights</text>
+    <text x="0" y="18" font-family="'Montserrat', 'Segoe UI', system-ui, -apple-system, Arial" font-size="22" font-weight="900" fill="url(#textGrad)">fiahab.com</text>
+    <text x="0" y="38" font-family="'Segoe UI', system-ui, -apple-system, Arial" font-size="11" fill="#A1A8B3">flying in a hot air balloon</text>
   </g>
 </svg>
 
