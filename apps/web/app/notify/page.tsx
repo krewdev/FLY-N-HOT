@@ -1,7 +1,7 @@
 import NotifySignup from '../components/NotifySignup';
 
 export const metadata = {
-	title: 'Get Notified - fiahab.com',
+	title: 'Get Notified - FIAHAB',
 	description: 'Subscribe to get notified about flights for a specific pilot or festival',
 };
 
@@ -14,7 +14,7 @@ export default function NotifyPage({ searchParams }: { searchParams: { pilot?: s
 			<section className="hero" style={{ padding: '60px 0' }}>
 				<div className="container">
 					<div className="eyebrow">🎫 QR-linked signup</div>
-					<h1 className="hero-title">Get Notified</h1>
+					<h1 className="hero-title">FIAHAB Notifications</h1>
 					<p className="hero-sub">Subscribe to alerts for a specific pilot or festival. If you scanned a QR, your selection is prefilled.</p>
 				</div>
 			</section>

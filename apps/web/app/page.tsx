@@ -42,8 +42,8 @@ export default async function HomePage() {
       <section className="hero">
         <div className="container">
                   <div className="eyebrow">🎈 Aerial adventures</div>
-        <h1 className="hero-title">fiahab.com</h1>
-        <p className="hero-sub">Scan a QR on a pilot&apos;s balloon or festival banner to subscribe, or choose from a dropdown.</p>
+        <h1 className="hero-title">FIAHAB: Flying in a Hot Air Balloon</h1>
+        <p className="hero-sub">Scan a QR on a pilot&apos;s balloon or festival banner to subscribe for notifications and book openings.</p>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
             <div className="panel" style={{ borderRadius: 16, overflow: 'hidden' }}>
               <Image
@@ -57,7 +57,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero-cta">
-            <a className="btn btn-primary" href="/notify">Get Notified</a>
+            <a className="btn btn-primary" href="/notify">Sign up for Notifications</a>
             <a className="btn btn-ghost" href="#flights">Explore Flights</a>
           </div>
         </div>

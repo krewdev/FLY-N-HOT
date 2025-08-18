@@ -76,12 +76,24 @@ export default function NotifySignup({ initialSelectionType, initialSelectionId 
 		setError(null);
 
 		try {
-			const response = await fetch('/api/notifications/subscribe', {
+			const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+			const url = base.replace(/\/$/, '') + '/notifications/subscribe';
+			const payload = {
+				name: formData.name,
+				email: formData.email,
+				phoneNumber: formData.phone,
+				birthday: formData.birthday,
+				weight: Number(formData.weight),
+				zipCode: formData.zipCode,
+				selectionType: formData.selectionType,
+				selectionId: formData.selectionId
+			};
+			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(formData),
+				body: JSON.stringify(payload),
 			});
 
 			if (!response.ok) {
@@ -89,14 +101,15 @@ export default function NotifySignup({ initialSelectionType, initialSelectionId 
 			}
 
 			setSuccess(true);
-			setFormData({
+			setFormData(prev => ({
+				...prev,
 				name: '',
 				email: '',
 				phone: '',
 				birthday: '',
 				weight: 0,
 				zipCode: ''
-			});
+			}));
 		} catch (err) {
 			setError('Failed to subscribe. Please try again.');
 		} finally {

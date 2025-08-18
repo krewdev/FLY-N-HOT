@@ -50,7 +50,16 @@ export default function FlightDetailPage() {
       });
       const body = await res.json().catch(() => ({}));
       if (res.ok) {
-        setStatus('Booking created. Payment captured (scaffold).');
+        // If Stripe payment link is available for this flight, redirect to it
+        const flightRes = await fetch(base.replace(/\/$/, '') + `/flights/${flight.flightId}`);
+        if (flightRes.ok) {
+          const fresh = await flightRes.json();
+          if (fresh.stripePaymentLinkId && fresh.stripePaymentLinkUrl) {
+            window.location.href = fresh.stripePaymentLinkUrl;
+            return;
+          }
+        }
+        setStatus('Booking created. Complete payment via Stripe.');
       } else {
         setStatus(`Error: ${body?.error || res.status}`);
       }

@@ -39,15 +39,18 @@ export default function PilotDashboard() {
 
   const loadPilotData = async () => {
     try {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+      const pilotIdDev = localStorage.getItem('pilotId_dev');
+      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
       const [flightsResponse, stripeResponse] = await Promise.all([
-        fetch('/api/pilot/flights', {
+        fetch(base.replace(/\/$/, '') + `/pilots/flights${qs}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('pilotToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
           }
         }),
-        fetch('/api/pilot/stripe-status', {
+        fetch(base.replace(/\/$/, '') + `/pilots/stripe-status${qs}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('pilotToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
           }
         })
       ]);
@@ -75,10 +78,13 @@ export default function PilotDashboard() {
 
   const handleNotifyPassengers = async (flightId: string) => {
     try {
-      const response = await fetch(`/api/pilot/flights/${flightId}/notify`, {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+      const pilotIdDev = localStorage.getItem('pilotId_dev');
+      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
+      const response = await fetch(base.replace(/\/$/, '') + `/pilots/flights/${flightId}/notify${qs}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('pilotToken')}`
+          'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
         }
       });
 
@@ -95,10 +101,13 @@ export default function PilotDashboard() {
 
   const connectStripe = async () => {
     try {
-      const response = await fetch('/api/pilot/connect-stripe', {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+      const pilotIdDev = localStorage.getItem('pilotId_dev');
+      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
+      const response = await fetch(base.replace(/\/$/, '') + `/pilots/connect-stripe${qs}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('pilotToken')}`
+          'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
         }
       });
 
