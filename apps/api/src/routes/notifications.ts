@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
-import { z } from 'zod';
 import { notifyPassengers } from '../services/notificationService.js';
 import crypto from 'crypto';
 
