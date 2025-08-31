@@ -112,7 +112,7 @@ export default function CustomerReviews() {
   return (
     <div className="section">
       <div className="container">
-        <h2 style={{ textAlign: 'center', marginBottom: 32, background: 'linear-gradient(135deg, #ff4757, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>🎈 What Our Users Say</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: 32, background: 'linear-gradient(135deg, #8b5cf6, #22c55e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>🎈 What Our Users Say</h2>
         
         <div className="panel pad" style={{ position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -137,7 +137,7 @@ export default function CustomerReviews() {
                 <h4 style={{ margin: 0 }}>{reviews[currentReview].name}</h4>
                 {reviews[currentReview].type === 'pilot' && (
                   <span style={{
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#8b5cf6',
                     color: 'white',
                     padding: '2px 8px',
                     borderRadius: 12,

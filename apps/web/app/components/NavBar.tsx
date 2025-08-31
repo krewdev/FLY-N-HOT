@@ -7,7 +7,7 @@ export default function NavBar() {
       <div className="container navbar-inner">
         <Link href="/" className="brand logo" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 10 }} aria-label="FIAHAB Flying in a Hot Air Balloon Home">
           <span style={{ fontSize: '24px', marginRight: '8px' }}>🎈</span>
-          <span style={{ background: 'linear-gradient(135deg, #ff4757, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontWeight: 'bold' }}>FIAHAB: Flying in a Hot Air Balloon</span>
+          <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #22c55e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontWeight: 'bold' }}>FIAHAB: Flying in a Hot Air Balloon</span>
         </Link>
         <nav className="nav">
           <Link href="/">Home</Link>
