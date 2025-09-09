@@ -1,40 +1,9 @@
 import NotifySignup from './components/NotifySignup';
 import CustomerReviews from './components/CustomerReviews';
 
-async function fetchFlights() {
-  try {
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-    const url = base.replace(/\/$/, '') + '/flights';
-    
-    const res = await fetch(url, { 
-      next: { revalidate: 10 },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!res.ok) {
-      throw new Error(`Failed to fetch flights: ${res.status} ${res.statusText}`);
-    }
-    
-    return res.json() as Promise<any[]>;
-  } catch (error) {
-    // During build time or when API is unavailable, return empty array
-    console.warn('API not available during build:', error);
-    return [];
-  }
-}
+// Flights fetching removed from homepage per design request
 
 export default async function HomePage() {
-  let flights: any[] = [];
-  let error: string | null = null;
-  
-  try {
-    flights = await fetchFlights();
-  } catch (err) {
-    console.error('Failed to fetch flights:', err);
-    error = err instanceof Error ? err.message : 'Failed to load flights';
-  }
 
   return (
     <main>
@@ -78,7 +47,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero-cta">
-            <a className="btn btn-primary" href="#flights">Explore Flights</a>
+            <a className="btn btn-primary" href="/flights/search">Explore Flights</a>
             <a className="btn btn-ghost" href="/pilot/login">Are you a pilot?</a>
           </div>
         </div>
@@ -87,43 +56,6 @@ export default async function HomePage() {
         <div className="panel pad" style={{ marginBottom: 18 }}>
           <NotifySignup />
         </div>
-        <h2 id="flights" style={{ marginTop: 0 }}>Available Flights</h2>
-      {error ? (
-        <div className="panel pad" style={{ backgroundColor: '#fee', border: '1px solid #fcc', marginBottom: 18 }}>
-          <p style={{ color: '#c33', margin: 0 }}>⚠️ Error loading flights: {error}</p>
-          <p style={{ margin: '8px 0 0 0', fontSize: '0.9em', color: '#666' }}>
-            Please check that the API server is running on the expected URL.
-          </p>
-        </div>
-      ) : null}
-      {flights.length === 0 && !error ? (
-        <div className="panel pad" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', marginBottom: 18 }}>
-          <p style={{ margin: 0, color: '#666' }}>No flights available yet.</p>
-          <p style={{ margin: '8px 0 0 0', fontSize: '0.9em', color: '#999' }}>
-            Check back soon for new flight opportunities!
-          </p>
-        </div>
-      ) : (
-        <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
-          {flights.map((f) => (
-            <li key={f.flightId} className="card">
-              <h4>Price per seat: ${f.pricePerSeat}</h4>
-              <div className="muted">Meetup: {new Date(f.meetupTimestamp).toLocaleString()}</div>
-              <div className="row" style={{ marginTop: 6 }}>
-                <span className="muted">Seats:</span>
-                <span>{f.seatsReserved}/{f.totalSeats}</span>
-              </div>
-              <div className="row" style={{ marginTop: 4 }}>
-                <span className="muted">Status:</span>
-                <span>{f.status}</span>
-              </div>
-              {f.description ? <div className="muted" style={{ marginTop: 8 }}>{f.description}</div> : null}
-              <div className="sp" />
-              <a className="link-btn" href={`/flights/${f.flightId}`}>View & Reserve →</a>
-            </li>
-          ))}
-        </ul>
-                )}
       </div>
 
       {/* Customer Reviews Slideshow */}
