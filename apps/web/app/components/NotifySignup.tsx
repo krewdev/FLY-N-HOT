@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface SignupData {
   name: string;
@@ -9,20 +9,58 @@ interface SignupData {
   birthday: string;
   weight: number;
   zipCode: string;
+  pilotId?: string;
+  festivalId?: string;
 }
 
-export default function NotifySignup() {
+interface NotifySignupProps {
+  preselectedPilotId?: string;
+  preselectedPilotName?: string;
+  preselectedFestivalId?: string;
+  preselectedFestivalName?: string;
+}
+
+export default function NotifySignup(props: NotifySignupProps) {
   const [formData, setFormData] = useState<SignupData>({
     name: '',
     email: '',
     phone: '',
     birthday: '',
     weight: 0,
-    zipCode: ''
+    zipCode: '',
+    pilotId: undefined,
+    festivalId: undefined
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pilots, setPilots] = useState<Array<{ pilotId: string; name: string }>>([]);
+  const [festivals, setFestivals] = useState<Array<{ festivalId: string; name: string }>>([]);
+
+  useEffect(() => {
+    const loadLists = async () => {
+      try {
+        const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+        const [pRes, fRes] = await Promise.all([
+          fetch(base.replace(/\/$/, '') + '/pilots'),
+          fetch(base.replace(/\/$/, '') + '/festivals/upcoming')
+        ]);
+        if (pRes.ok) setPilots(await pRes.json());
+        if (fRes.ok) setFestivals(await fRes.json());
+      } catch {
+        // ignore list load errors silently for UX
+      }
+    };
+    loadLists();
+  }, []);
+
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      pilotId: props.preselectedPilotId ?? prev.pilotId,
+      festivalId: props.preselectedFestivalId ?? prev.festivalId,
+    }));
+  }, [props.preselectedPilotId, props.preselectedFestivalId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +68,15 @@ export default function NotifySignup() {
     setError(null);
 
     try {
-      const response = await fetch('/api/notifications/subscribe', {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
+      const response = await fetch(base.replace(/\/$/, '') + '/notifications/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+        }),
       });
 
       if (!response.ok) {
@@ -49,7 +90,9 @@ export default function NotifySignup() {
         phone: '',
         birthday: '',
         weight: 0,
-        zipCode: ''
+        zipCode: '',
+        pilotId: undefined,
+        festivalId: undefined
       });
     } catch (err) {
       setError('Failed to subscribe. Please try again.');
@@ -85,6 +128,45 @@ export default function NotifySignup() {
       
       <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+          <div>
+            <label htmlFor="pilot" className="form-label">
+              Pilot (optional)
+            </label>
+            <select
+              id="pilot"
+              className="form-input"
+              value={formData.pilotId || ''}
+              onChange={(e) => handleInputChange('pilotId', e.target.value || undefined)}
+            >
+              <option value="">Select a pilot</option>
+              {props.preselectedPilotId && props.preselectedPilotName && (
+                <option value={props.preselectedPilotId}>{props.preselectedPilotName}</option>
+              )}
+              {pilots.map((p) => (
+                <option key={p.pilotId} value={p.pilotId}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="festival" className="form-label">
+              Festival (optional)
+            </label>
+            <select
+              id="festival"
+              className="form-input"
+              value={formData.festivalId || ''}
+              onChange={(e) => handleInputChange('festivalId', e.target.value || undefined)}
+            >
+              <option value="">Select a festival</option>
+              {props.preselectedFestivalId && props.preselectedFestivalName && (
+                <option value={props.preselectedFestivalId}>{props.preselectedFestivalName}</option>
+              )}
+              {festivals.map((f) => (
+                <option key={f.festivalId} value={f.festivalId}>{(f as any).name}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <label htmlFor="name" className="form-label">
               Full Name *

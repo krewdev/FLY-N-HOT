@@ -12,6 +12,8 @@ import { router as pilotFlightsRouter } from './routes/pilotFlights.js';
 import { router as bookingsRouter } from './routes/bookings.js';
 import webhooksRouter from './routes/webhooks.js';
 import { router as notificationsRouter } from './routes/notifications.js';
+import pilotsRouter from './routes/pilots.js';
+import festivalsRouter from './routes/festivals.js';
 import adminRouter from './routes/admin.js';
 
 const app = express();
@@ -62,6 +64,8 @@ app.use('/', flightsRouter);
 app.use('/bookings', bookingsRouter);
 app.use('/webhooks', webhooksRouter);
 app.use('/notifications', notificationsRouter);
+app.use('/pilots', pilotsRouter);
+app.use('/festivals', festivalsRouter);
 app.use('/admin', adminRouter);
 
 app.use((req, res) => {
