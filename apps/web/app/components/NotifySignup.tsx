@@ -67,9 +67,9 @@ export default function NotifySignup() {
 
   if (success) {
     return (
-      <div className="panel pad" style={{ backgroundColor: '#f0f9ff', border: '1px solid #0ea5e9' }}>
-        <h3 style={{ color: '#0c4a6e', margin: '0 0 8px 0' }}>🎉 Successfully Subscribed!</h3>
-        <p style={{ color: '#0369a1', margin: 0 }}>
+      <div className="panel pad" style={{ backgroundColor: 'rgba(16,185,129,0.1)', border: '1px solid rgba(167,139,250,0.4)' }}>
+        <h3 style={{ color: '#a78bfa', margin: '0 0 8px 0' }}>🎉 Successfully Subscribed!</h3>
+        <p style={{ color: '#e5e7eb', margin: 0 }}>
           You&apos;ll be notified about hot air balloon flights in your area. Check your email for confirmation!
         </p>
       </div>
@@ -78,7 +78,7 @@ export default function NotifySignup() {
 
   return (
     <div className="panel pad">
-      <h2 style={{ background: 'linear-gradient(135deg, #ff4757, #4ecdc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>🎈 Get Notified About Hot Air Balloon Flights</h2>
+      <h2 style={{ background: 'linear-gradient(135deg, #a78bfa, #10b981)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>🎈 Get notified about new flights</h2>
       <p className="muted">
         Subscribe to receive notifications about available flights, special events, and last-minute opportunities in your area.
       </p>
@@ -180,8 +180,8 @@ export default function NotifySignup() {
         </div>
 
         {error && (
-          <div style={{ backgroundColor: '#fee', border: '1px solid #fcc', padding: 12, borderRadius: 4, marginTop: 16 }}>
-            <p style={{ color: '#c33', margin: 0 }}>Error: {error}</p>
+          <div className="error" style={{ padding: 12, borderRadius: 8, marginTop: 16 }}>
+            <p style={{ margin: 0 }}>Error: {error}</p>
           </div>
         )}
 
