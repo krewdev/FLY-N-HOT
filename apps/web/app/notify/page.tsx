@@ -1,31 +1,26 @@
 import NotifySignup from '../components/NotifySignup';
 
-export default function NotifyPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const pilotId = typeof searchParams.pilotId === 'string' ? searchParams.pilotId : undefined;
-  const festivalId = typeof searchParams.festivalId === 'string' ? searchParams.festivalId : undefined;
-  const pilotName = typeof searchParams.pilotName === 'string' ? searchParams.pilotName : undefined;
-  const festivalName = typeof searchParams.festivalName === 'string' ? searchParams.festivalName : undefined;
+export const metadata = {
+	title: 'Get Notified - Fiahab',
+	description: 'Subscribe to get notified about flights for a specific pilot or festival',
+};
 
-  return (
-    <main>
-      <section className="hero">
-        <div className="container">
-          <div className="eyebrow">🎈 Fiahab Notifications</div>
-          <h1 className="hero-title">Get Notified</h1>
-          <p className="hero-sub">Sign up to receive updates from pilots and festivals you care about.</p>
-        </div>
-      </section>
-      <div className="container section">
-        <div className="panel pad">
-          <NotifySignup
-            preselectedPilotId={pilotId}
-            preselectedPilotName={pilotName}
-            preselectedFestivalId={festivalId}
-            preselectedFestivalName={festivalName}
-          />
-        </div>
-      </div>
-    </main>
-  );
+export default function NotifyPage() {
+	return (
+		<main>
+			<section className="hero" style={{ padding: '60px 0' }}>
+				<div className="container">
+					<div className="eyebrow">🎫 QR-linked signup</div>
+					<h1 className="hero-title">Fiahab Notifications</h1>
+					<p className="hero-sub">Subscribe to alerts for a specific pilot or festival. If you scanned a QR, your selection is prefilled.</p>
+				</div>
+			</section>
+			<div className="container section">
+				<div className="panel pad" style={{ maxWidth: 840, margin: '0 auto' }}>
+					<NotifySignup />
+				</div>
+			</div>
+		</main>
+	);
 }
 

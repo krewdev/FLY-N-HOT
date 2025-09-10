@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 // Avoid importing enums from client to prevent build mismatches
 import { prisma } from '../db.js';
+import { StripeService } from '../services/stripe.js';
 export const router = Router();
 
 const createFlightSchema = z.object({
@@ -66,7 +67,11 @@ router.get('/flights/:flightId', async (req, res) => {
   try {
     const flight = await prisma.flight.findUnique({ where: { flightId: req.params.flightId } });
     if (!flight) return res.status(404).json({ error: 'Flight not found' });
-    return res.json(flight);
+    let paymentUrl: string | undefined;
+    if (flight.stripePaymentLinkId) {
+      paymentUrl = await StripeService.getPaymentLinkUrl(flight.stripePaymentLinkId, flight.pilotId) || undefined;
+    }
+    return res.json({ ...flight, stripePaymentLinkUrl: paymentUrl });
   } catch (err) {
     return res.status(500).json({ error: 'Failed to get flight' });
   }

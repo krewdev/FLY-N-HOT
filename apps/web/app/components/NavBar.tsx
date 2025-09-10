@@ -11,6 +11,7 @@ export default function NavBar() {
         </Link>
         <nav className="nav">
           <Link href="/">Home</Link>
+          <Link href="/notify">Get Notified</Link>
           <Link href="/pilot/login">Pilot Login</Link>
           <Link href="/pilot/register">Pilot Register</Link>
         </nav>

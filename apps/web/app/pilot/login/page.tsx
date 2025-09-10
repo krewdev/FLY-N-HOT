@@ -6,24 +6,20 @@ export default function PilotLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<string | null>(null);
+  const [pilotId, setPilotId] = useState('');
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus('Signing in...');
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-      const url = base.replace(/\/$/, '') + '/auth/login/password';
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      if (res.ok) {
-        setStatus('Logged in (stub)');
-      } else {
-        const body = await res.json().catch(() => ({}));
-        setStatus(`Error: ${body?.message || body?.error || res.status}`);
+      // Dev bypass: store pilotId for API calls that accept ?pilotId= in dev
+      if (pilotId) {
+        localStorage.setItem('pilotId_dev', pilotId);
+        setStatus('Dev pilot bypass enabled');
+        return;
       }
+      // Fallback to stub login
+      setStatus('Provide a pilotId to bypass in development.');
     } catch (err: any) {
       setStatus(`Error: ${err?.message || 'network'}`);
     }
@@ -42,6 +38,14 @@ export default function PilotLoginPage() {
           Password
           <input value={password} onChange={(e) => setPassword(e.target.value)} required type="password" style={{ width: '100%', padding: 8, border: '1px solid #ccc', borderRadius: 6 }} />
         </label>
+        <div style={{ borderTop: '1px solid #eee', paddingTop: 12 }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>Developer Pilot Bypass</div>
+          <label>
+            Pilot ID (dev only)
+            <input value={pilotId} onChange={(e) => setPilotId(e.target.value)} placeholder="00000000-0000-0000-0000-000000000000" style={{ width: '100%', padding: 8, border: '1px solid #ccc', borderRadius: 6 }} />
+          </label>
+          <div className="muted" style={{ fontSize: '0.9em' }}>When provided, API calls will include ?pilotId= to bypass auth in development.</div>
+        </div>
         <button type="submit" style={{ padding: '10px 12px', borderRadius: 6, background: 'black', color: 'white' }}>Sign In</button>
       </form>
       {status && <p style={{ marginTop: 12 }}>{status}</p>}

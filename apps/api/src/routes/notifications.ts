@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
+import { notifyPassengers } from '../services/notificationService.js';
 
 export const router = Router();
 
@@ -45,7 +46,31 @@ router.post('/subscribe', async (req, res) => {
     });
     return res.status(201).json({ ok: true });
   } catch (err) {
+    console.error('Subscribe error:', err);
     return res.status(500).json({ error: 'Failed to subscribe' });
+  }
+});
+
+// Pilot triggers notifications to their subscribers about an opening
+router.post('/notify/pilot/:pilotId', async (req, res) => {
+  try {
+    const { pilotId } = req.params;
+    const subs = await prisma.notificationSubscription.findMany({
+      where: { pilotId },
+      select: { email: true, phoneNumber: true }
+    });
+    const emails = subs.map((s) => s.email).filter(Boolean) as string[];
+    const phones = subs.map((s) => s.phoneNumber).filter(Boolean) as string[];
+
+    if (phones.length > 0) {
+      await notifyPassengers({ phoneNumbers: phones });
+    }
+    // TODO: send emails via provider too
+
+    return res.json({ notified: { emails: emails.length, sms: phones.length } });
+  } catch (err) {
+    console.error('Notify pilot subscribers error:', err);
+    return res.status(500).json({ error: 'Failed to send notifications' });
   }
 });
 
