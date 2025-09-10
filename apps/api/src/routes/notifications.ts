@@ -12,8 +12,8 @@ const schema = z.object({
   birthday: z.string().optional(),
   weight: z.coerce.number().int().min(50).max(800).optional(),
   zipCode: z.string().min(3).max(10).optional(),
-  pilotId: z.string().uuid().optional(),
-  festivalId: z.string().uuid().optional()
+  pilotId: z.string().uuid(),
+  festivalId: z.string().uuid()
 }).refine((d) => !!d.email || !!d.phone || !!d.phoneNumber, { message: 'email or phone required' });
 
 router.post('/subscribe', async (req, res) => {

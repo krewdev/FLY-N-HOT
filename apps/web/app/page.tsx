@@ -5,6 +5,7 @@ import Image from 'next/image';
 // Flights fetching removed from homepage per design request
 
 export default async function HomePage() {
+  const hero = process.env.NEXT_PUBLIC_HERO_IMAGE ?? '/hero.jpg';
 
   return (
     <main>
@@ -16,7 +17,7 @@ export default async function HomePage() {
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
             <div className="panel hero-image" style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
               <Image
-                src="/hero.jpg"
+                src={hero}
                 alt="Fiahab hot air balloon"
                 width={1600}
                 height={800}

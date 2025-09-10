@@ -130,13 +130,14 @@ export default function NotifySignup(props: NotifySignupProps) {
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
           <div>
             <label htmlFor="pilot" className="form-label">
-              Pilot (optional)
+              Pilot *
             </label>
             <select
               id="pilot"
               className="form-input"
               value={formData.pilotId || ''}
               onChange={(e) => handleInputChange('pilotId', e.target.value || undefined)}
+              required
             >
               <option value="">Select a pilot</option>
               {props.preselectedPilotId && props.preselectedPilotName && (
@@ -150,13 +151,14 @@ export default function NotifySignup(props: NotifySignupProps) {
 
           <div>
             <label htmlFor="festival" className="form-label">
-              Festival (optional)
+              Festival *
             </label>
             <select
               id="festival"
               className="form-input"
               value={formData.festivalId || ''}
               onChange={(e) => handleInputChange('festivalId', e.target.value || undefined)}
+              required
             >
               <option value="">Select a festival</option>
               {props.preselectedFestivalId && props.preselectedFestivalName && (
@@ -270,7 +272,7 @@ export default function NotifySignup(props: NotifySignupProps) {
         <div style={{ marginTop: 16 }}>
           <button
             type="submit"
-            disabled={loading || !formData.name || !formData.email || !formData.phone || !formData.birthday || !formData.weight}
+            disabled={loading || !formData.name || !formData.email || !formData.phone || !formData.birthday || !formData.weight || !formData.pilotId || !formData.festivalId}
             className="btn btn-primary"
             style={{ width: '100%' }}
           >
