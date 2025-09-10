@@ -1,44 +1,42 @@
-/* Balloon Festival Theme - Bright & Vibrant Colors */
+/* Fiahab Theme - Purple & Green */
 :root {
-  /* Primary Balloon Colors */
-  --balloon-red: #ff4757;
-  --balloon-orange: #ff6b35;
-  --balloon-yellow: #ffd93d;
-  --balloon-green: #6bcf7f;
-  --balloon-blue: #4ecdc4;
-  --balloon-purple: #a55eea;
-  --balloon-pink: #fd79a8;
+  /* Core Brand Colors */
+  --brand-purple: #6d28d9; /* purple-700 */
+  --brand-purple-light: #a78bfa; /* purple-300 */
+  --brand-green: #10b981; /* emerald-500 */
+  --brand-green-dark: #059669; /* emerald-600 */
+  --brand-ink: #1f2937; /* gray-800 */
   
-  /* Sky Gradients */
-  --sky-blue: #74b9ff;
-  --sky-light: #a29bfe;
-  --sunrise-orange: #ff7675;
-  --sunset-pink: #fd79a8;
+  /* Accent & Atmosphere */
+  --sky-blue: #8b5cf6; /* purple-500 */
+  --sky-light: #22c55e; /* green-500 */
+  --sunrise-orange: #7c3aed; /* purple-600 */
+  --sunset-pink: #34d399; /* green-400 */
   
   /* Background Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9ff;
-  --bg-accent: #fff5f5;
+  --bg-primary: #0b1020;
+  --bg-secondary: #0f152b;
+  --bg-accent: #0b1020;
   
   /* Text Colors */
-  --text-primary: #2d3436;
-  --text-secondary: #636e72;
-  --text-accent: #e84393;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-accent: #a78bfa;
   
   /* Button Colors */
-  --btn-primary: linear-gradient(135deg, var(--balloon-red), var(--balloon-orange));
-  --btn-secondary: linear-gradient(135deg, var(--balloon-blue), var(--balloon-green));
-  --btn-accent: linear-gradient(135deg, var(--balloon-purple), var(--balloon-pink));
+  --btn-primary: linear-gradient(135deg, var(--brand-purple), var(--brand-green));
+  --btn-secondary: linear-gradient(135deg, var(--brand-green), var(--brand-green-dark));
+  --btn-accent: linear-gradient(135deg, var(--brand-purple-light), var(--brand-green));
   
   /* Card & Panel Colors */
-  --card-bg: #ffffff;
-  --card-border: #e8f4fd;
-  --card-shadow: 0 8px 32px rgba(116, 185, 255, 0.15);
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(167, 139, 250, 0.25);
+  --card-shadow: 0 8px 32px rgba(107, 114, 128, 0.2);
   
   /* Success & Warning Colors */
-  --success: #00b894;
-  --warning: #fdcb6e;
-  --error: #d63031;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
 }
 
 * {
@@ -54,7 +52,9 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-accent) 100%);
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(109, 40, 217, 0.35), transparent),
+              radial-gradient(1000px 500px at 90% 10%, rgba(16, 185, 129, 0.25), transparent),
+              linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
   color: var(--text-primary);
   line-height: 1.6;
 }
@@ -68,9 +68,9 @@ body::before {
   width: 100%;
   height: 100%;
   background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255, 71, 87, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(165, 94, 234, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(109, 40, 217, 0.12) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
 }
@@ -101,21 +101,18 @@ a {
   transform: translateX(-50%);
   width: 100px;
   height: 4px;
-  background: linear-gradient(90deg, var(--balloon-red), var(--balloon-orange), var(--balloon-yellow), var(--balloon-green), var(--balloon-blue));
+  background: linear-gradient(90deg, var(--brand-purple), var(--brand-purple-light), var(--brand-green));
   border-radius: 2px;
 }
 
 /* Hero section with vibrant balloon festival colors */
 .hero {
-  background: linear-gradient(135deg, 
-    var(--balloon-red) 0%, 
-    var(--balloon-orange) 25%, 
-    var(--balloon-yellow) 50%, 
-    var(--balloon-green) 75%, 
-    var(--balloon-blue) 100%);
+  background: radial-gradient(1000px 400px at 50% -10%, rgba(109, 40, 217, 0.6), transparent),
+              radial-gradient(800px 300px at 10% 20%, rgba(16, 185, 129, 0.45), transparent),
+              linear-gradient(135deg, #171a2b, #101528);
   color: white;
   text-align: center;
-  padding: 80px 0;
+  padding: 96px 0 80px 0;
   position: relative;
   overflow: hidden;
 }
@@ -127,8 +124,15 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="90" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(167,139,250,0.12)"/><circle cx="80" cy="40" r="1.5" fill="rgba(16,185,129,0.12)"/><circle cx="40" cy="80" r="1" fill="rgba(167,139,250,0.12)"/><circle cx="90" cy="90" r="1.5" fill="rgba(16,185,129,0.12)"/></svg>');
   animation: float 20s ease-in-out infinite;
+}
+.hero-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.35));
+  pointer-events: none;
 }
 
 @keyframes float {
@@ -140,8 +144,8 @@ a {
   font-size: 4rem;
   font-weight: 800;
   margin-bottom: 20px;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.35);
-  background: linear-gradient(45deg, #ffffff, #e8f4ff);
+  text-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  background: linear-gradient(45deg, var(--brand-purple-light), #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -177,8 +181,8 @@ a {
 
 .panel:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(116, 185, 255, 0.3);
-  border-color: var(--balloon-blue);
+  box-shadow: 0 15px 40px rgba(167, 139, 250, 0.25);
+  border-color: var(--brand-purple-light);
 }
 
 .pad {
@@ -197,8 +201,8 @@ a {
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(116, 185, 255, 0.2);
-  border-color: var(--balloon-green);
+  box-shadow: 0 12px 30px rgba(167, 139, 250, 0.15);
+  border-color: var(--brand-green);
 }
 
 /* Button styling with balloon festival gradients */
@@ -235,18 +239,18 @@ a {
 .btn-primary {
   background: var(--btn-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+  box-shadow: 0 8px 22px rgba(109, 40, 217, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.35);
 }
 
 .btn-secondary {
   background: var(--btn-secondary);
   color: white;
-  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .btn-secondary:hover {
@@ -256,13 +260,13 @@ a {
 
 .btn-ghost {
   background: transparent;
-  color: var(--balloon-blue);
-  border: 2px solid var(--balloon-blue);
+  color: var(--brand-purple-light);
+  border: 2px solid var(--brand-purple-light);
 }
 
 .btn-ghost:hover {
-  background: var(--balloon-blue);
-  color: white;
+  background: var(--brand-purple-light);
+  color: #0f152b;
   transform: translateY(-2px);
 }
 
@@ -279,8 +283,8 @@ a {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--balloon-blue);
-  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+  border-color: var(--brand-purple-light);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
   transform: translateY(-1px);
 }
 
@@ -299,9 +303,9 @@ a {
 
 /* Navigation styling */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(6, 8, 18, 0.9);
   backdrop-filter: blur(10px);
-  border-bottom: 2px solid var(--card-border);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.25);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -322,13 +326,13 @@ a {
 
 .nav a {
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
   transition: color 0.3s ease;
   position: relative;
 }
 
 .nav a:hover {
-  color: var(--balloon-blue);
+  color: var(--brand-purple-light);
 }
 
 .nav a::after {
@@ -338,7 +342,7 @@ a {
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--balloon-blue);
+  background: linear-gradient(90deg, var(--brand-purple-light), var(--brand-green));
   transition: width 0.3s ease;
 }
 
@@ -350,7 +354,7 @@ a {
 .brand {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--balloon-red);
+  color: var(--brand-purple-light);
 }
 
 /* Muted text */
@@ -361,7 +365,7 @@ a {
 
 /* Success and error messages */
 .success {
-  background: linear-gradient(135deg, var(--success), #00cec9);
+  background: linear-gradient(135deg, var(--success), #34d399);
   color: white;
   border-radius: 12px;
   padding: 16px;
@@ -369,7 +373,7 @@ a {
 }
 
 .error {
-  background: linear-gradient(135deg, var(--error), #e17055);
+  background: linear-gradient(135deg, var(--error), #b91c1c);
   color: white;
   border-radius: 12px;
   padding: 16px;
@@ -413,18 +417,18 @@ a {
 
 /* Special balloon festival elements */
 .balloon-accent {
-  background: linear-gradient(45deg, var(--balloon-red), var(--balloon-orange));
+  background: linear-gradient(45deg, var(--brand-purple), var(--brand-green));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .sky-gradient {
-  background: linear-gradient(135deg, var(--sky-blue), var(--sky-light));
+  background: linear-gradient(135deg, var(--brand-purple), var(--brand-green));
 }
 
 .sunrise-gradient {
-  background: linear-gradient(135deg, var(--sunrise-orange), var(--sunset-pink));
+  background: linear-gradient(135deg, var(--brand-purple), var(--brand-green));
 }
 
 /* Enhanced hover effects for interactive elements */

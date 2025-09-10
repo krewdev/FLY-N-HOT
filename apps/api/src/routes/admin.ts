@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 import { validateAdminSecret } from '../middleware/adminAuth';
+import QRCode from 'qrcode';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -275,3 +276,17 @@ router.get('/actions', async (req, res) => {
 });
 
 export default router;
+
+// Generate QR code PNG data URL for a pilot's notify link
+router.get('/pilots/:pilotId/qr', async (req, res) => {
+  try {
+    const { pilotId } = req.params;
+    const base = process.env.PUBLIC_WEB_BASE_URL || 'https://your-web-domain.com';
+    const url = `${base.replace(/\/$/, '')}/notify?pilotId=${encodeURIComponent(pilotId)}`;
+    const dataUrl = await QRCode.toDataURL(url, { margin: 1, width: 512, errorCorrectionLevel: 'M' });
+    res.json({ url, qrDataUrl: dataUrl });
+  } catch (error) {
+    console.error('Generate pilot QR error:', error);
+    res.status(500).json({ error: 'Failed to generate QR' });
+  }
+});

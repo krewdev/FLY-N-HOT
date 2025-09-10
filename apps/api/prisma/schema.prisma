@@ -127,11 +127,29 @@ model NotificationSubscription {
   birthday       DateTime
   weight         Int      // Weight in pounds
   zipCode        String?
+  pilotId        String?
+  festivalId     String?
   createdAt      DateTime @default(now())
+
+  pilot          PilotProfile? @relation(fields: [pilotId], references: [pilotId])
 
   @@index([email])
   @@index([phoneNumber])
   @@index([weight])
+  @@index([pilotId])
+  @@index([festivalId])
+}
+
+model Festival {
+  festivalId   String   @id @default(uuid())
+  name         String
+  location     Json
+  startDate    DateTime
+  endDate      DateTime
+  description  String?
+  createdAt    DateTime @default(now())
+
+  @@index([startDate])
 }
 
 model PilotApplication {

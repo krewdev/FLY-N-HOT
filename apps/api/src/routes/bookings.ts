@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { PaymentStatus } from '@prisma/client';
+// Using string literal to avoid type import mismatches during build
 import { createPaymentIntent } from '../services/paymentService.js';
 import { prisma } from '../db.js';
 export const router = Router();
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 
   try {
     // Use transaction to prevent race conditions
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Get flight with FOR UPDATE lock to prevent concurrent modifications
       const flight = await tx.flight.findUnique({ 
         where: { flightId },
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
           totalAmountPaid: total,
           platformFee: 0, // computed at capture time in real system
           pilotPayoutAmount: total, // placeholder
-          paymentStatus: PaymentStatus.PAID, // for scaffold assume immediate success
+          paymentStatus: 'PAID' as any, // for scaffold assume immediate success
           stripePaymentIntentId: null // Will be updated after payment intent creation
         }
       });

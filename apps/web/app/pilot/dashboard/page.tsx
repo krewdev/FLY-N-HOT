@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface Flight {
@@ -27,42 +27,68 @@ interface StripeAccountStatus {
 }
 
 export default function PilotDashboard() {
+  return (
+    <Suspense fallback={<div className="container"><div className="panel pad"><p>Loading...</p></div></div>}>
+      <Dashboard />
+    </Suspense>
+  );
+}
+
+function Dashboard() {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [stripeStatus, setStripeStatus] = useState<StripeAccountStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000').replace(/\/$/, '');
+  const isDevBypass = (process.env.NEXT_PUBLIC_DEV_MODE === 'true');
+  const devPilotId = (searchParams?.get('pilotId') || process.env.NEXT_PUBLIC_DEV_PILOT_ID) as string | null;
 
   useEffect(() => {
     loadPilotData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadPilotData = async () => {
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-      const pilotIdDev = localStorage.getItem('pilotId_dev');
-      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
-      const [flightsResponse, stripeResponse] = await Promise.all([
-        fetch(base.replace(/\/$/, '') + `/pilots/flights${qs}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
-          }
-        }),
-        fetch(base.replace(/\/$/, '') + `/pilots/stripe-status${qs}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
-          }
-        })
-      ]);
+      // Dev bypass: if no token and dev mode, fetch using pilotId query param
+      const token = typeof window !== 'undefined' ? localStorage.getItem('pilotToken') : null;
+      const pilotIdForFetch = (token ? null : (isDevBypass ? devPilotId : null));
+
+      const flightsUrl = pilotIdForFetch
+        ? `${apiBase}/pilots/flights?pilotId=${encodeURIComponent(pilotIdForFetch)}`
+        : `${apiBase}/pilots/flights`;
+
+      const flightsResponse = await fetch(flightsUrl, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined
+      });
 
       if (flightsResponse.ok) {
         const flightsData = await flightsResponse.json();
         setFlights(flightsData);
+      } else {
+        throw new Error('Failed to load flights');
       }
 
-      if (stripeResponse.ok) {
-        const stripeData = await stripeResponse.json();
-        setStripeStatus(stripeData);
+      if (token) {
+        const stripeResponse = await fetch(`${apiBase}/pilot/stripe-status`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (stripeResponse.ok) {
+          const stripeData = await stripeResponse.json();
+          setStripeStatus(stripeData);
+        }
+      } else if (isDevBypass) {
+        // Fake ACTIVE Stripe status in dev bypass so UI is usable
+        setStripeStatus({
+          connected: true,
+          status: 'ACTIVE',
+          chargesEnabled: true,
+          payoutsEnabled: true,
+          detailsSubmitted: true
+        });
       }
     } catch (err) {
       setError('Failed to load pilot data');
@@ -73,7 +99,9 @@ export default function PilotDashboard() {
   };
 
   const handleCreateFlight = () => {
-    router.push('/pilot/flights/create');
+    // Preserve dev pilotId param if present so the create page can use it
+    const param = devPilotId && isDevBypass ? `?pilotId=${encodeURIComponent(devPilotId)}` : '';
+    router.push('/pilot/flights/create' + param);
   };
 
   const handleNotifyPassengers = async (flightId: string) => {
@@ -101,14 +129,10 @@ export default function PilotDashboard() {
 
   const connectStripe = async () => {
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-      const pilotIdDev = localStorage.getItem('pilotId_dev');
-      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
-      const response = await fetch(base.replace(/\/$/, '') + `/pilots/connect-stripe${qs}`, {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('pilotToken') : null;
+      const response = await fetch(`${apiBase}/pilot/connect-stripe`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
-        }
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined
       });
 
       if (!response.ok) {

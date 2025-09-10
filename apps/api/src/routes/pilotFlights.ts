@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { FlightStatus } from '@prisma/client';
+// Avoid importing enums from client to prevent build mismatches
 import { prisma } from '../db.js';
 import { StripeService } from '../services/stripe.js';
 import { notifyPassengers } from '../services/notificationService.js';
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
         pricePerSeat,
         totalSeats,
         description: description ?? null,
-        status: FlightStatus.UPCOMING
+        status: 'UPCOMING' as any
       }
     });
     // Create Stripe product/price/payment link for this flight if connected

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { FlightStatus } from '@prisma/client';
+// Avoid importing enums from client to prevent build mismatches
 import { prisma } from '../db.js';
 import { StripeService } from '../services/stripe.js';
 export const router = Router();
@@ -44,7 +44,7 @@ router.post('/flights', async (req, res) => {
         pricePerSeat,
         totalSeats,
         description: description ?? null,
-        status: FlightStatus.UPCOMING
+        status: 'UPCOMING' as any
       }
     });
     return res.status(201).json(flight);
