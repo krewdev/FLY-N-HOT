@@ -14,7 +14,7 @@ export default async function HomePage() {
           <h1 className="hero-title">Fiahab</h1>
           <p className="hero-sub">Book scenic hot‑air balloon flights with trusted local pilots. Reserve your seats and enjoy the view.</p>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
-            <div className="panel" style={{ borderRadius: 16, overflow: 'hidden' }}>
+            <div className="panel hero-image" style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
               <Image
                 src="/hero.jpg"
                 alt="Fiahab hot air balloon"
