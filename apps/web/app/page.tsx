@@ -5,7 +5,7 @@ import Image from 'next/image';
 // Flights fetching removed from homepage per design request
 
 export default async function HomePage() {
-  const hero = process.env.NEXT_PUBLIC_HERO_IMAGE ?? '/hero.jpg';
+  const hero = process.env.NEXT_PUBLIC_HERO_IMAGE ?? '/balloon-logo.jpg';
 
   return (
     <main>
