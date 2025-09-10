@@ -129,21 +129,10 @@ function Dashboard() {
 
   const connectStripe = async () => {
     try {
-<<<<<<< HEAD
       const token = typeof window !== 'undefined' ? localStorage.getItem('pilotToken') : null;
       const response = await fetch(`${apiBase}/pilot/connect-stripe`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : undefined
-=======
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-      const pilotIdDev = localStorage.getItem('pilotId_dev');
-      const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
-      const response = await fetch(base.replace(/\/$/, '') + `/pilots/connect-stripe${qs}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('pilotToken') || ''}`
-        }
->>>>>>> origin/main
       });
 
       if (!response.ok) {
