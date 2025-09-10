@@ -10,6 +10,12 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry'
   },
+  webServer: {
+    command: 'npm run build && npm run start',
+    url: baseURL,
+    reuseExistingServer: true,
+    timeout: 120_000
+  },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ]

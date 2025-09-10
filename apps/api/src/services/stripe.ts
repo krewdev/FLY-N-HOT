@@ -296,4 +296,24 @@ export class StripeService {
       throw new Error('Failed to get Stripe account status');
     }
   }
+
+  // Retrieve payment link URL for a flight
+  static async getPaymentLinkUrl(paymentLinkId: string, pilotId: string) {
+    try {
+      const pilot = await prisma.pilotProfile.findUnique({
+        where: { pilotId },
+        select: { stripeConnectAccountId: true }
+      });
+      if (!pilot?.stripeConnectAccountId) {
+        return null;
+      }
+      const link = await stripe.paymentLinks.retrieve(paymentLinkId, {
+        stripeAccount: pilot.stripeConnectAccountId
+      });
+      return link.url;
+    } catch (error) {
+      console.error('Error retrieving payment link:', error);
+      return null;
+    }
+  }
 }
