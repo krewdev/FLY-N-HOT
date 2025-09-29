@@ -58,8 +58,6 @@ app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use('/health', healthRouter);
 app.use('/auth', authLimiter, authRouter);
-// Enable temporary pilot auth bypass in development for pilot routes
-app.use('/pilots', tempAuthBypass);
 app.use('/pilots/flights', pilotFlightsRouter);
 app.use('/', flightsRouter);
 app.use('/bookings', bookingsRouter);
