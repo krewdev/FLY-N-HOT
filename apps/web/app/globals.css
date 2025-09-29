@@ -4,9 +4,9 @@
   --balloon-red: #ff4757;
   --balloon-orange: #ff6b35;
   --balloon-yellow: #ffd93d;
-  --balloon-green: #6bcf7f;
+  --balloon-green: #22c55e;
   --balloon-blue: #4ecdc4;
-  --balloon-purple: #a55eea;
+  --balloon-purple: #8b5cf6;
   --balloon-pink: #fd79a8;
   
   /* Sky Gradients */
@@ -26,14 +26,14 @@
   --text-accent: #e84393;
   
   /* Button Colors */
-  --btn-primary: linear-gradient(135deg, var(--balloon-red), var(--balloon-orange));
-  --btn-secondary: linear-gradient(135deg, var(--balloon-blue), var(--balloon-green));
-  --btn-accent: linear-gradient(135deg, var(--balloon-purple), var(--balloon-pink));
+  --btn-primary: linear-gradient(135deg, var(--balloon-purple), var(--balloon-green));
+  --btn-secondary: linear-gradient(135deg, var(--balloon-green), var(--balloon-purple));
+  --btn-accent: linear-gradient(135deg, #7c3aed, #16a34a);
   
   /* Card & Panel Colors */
   --card-bg: #ffffff;
   --card-border: #e8f4fd;
-  --card-shadow: 0 8px 32px rgba(116, 185, 255, 0.15);
+  --card-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
   
   /* Success & Warning Colors */
   --success: #00b894;
@@ -58,6 +58,8 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
 }
+
+html { scroll-behavior: smooth; }
 
 /* Balloon Festival Background Pattern */
 body::before {
@@ -108,11 +110,8 @@ a {
 /* Hero section with vibrant balloon festival colors */
 .hero {
   background: linear-gradient(135deg, 
-    var(--balloon-red) 0%, 
-    var(--balloon-orange) 25%, 
-    var(--balloon-yellow) 50%, 
-    var(--balloon-green) 75%, 
-    var(--balloon-blue) 100%);
+    var(--balloon-purple) 0%, 
+    var(--balloon-green) 100%);
   color: white;
   text-align: center;
   padding: 80px 0;
@@ -177,8 +176,8 @@ a {
 
 .panel:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(116, 185, 255, 0.3);
-  border-color: var(--balloon-blue);
+  box-shadow: 0 20px 50px rgba(139, 92, 246, 0.25);
+  border-color: var(--balloon-purple);
 }
 
 .pad {
@@ -197,7 +196,7 @@ a {
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(116, 185, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.2);
   border-color: var(--balloon-green);
 }
 
@@ -228,6 +227,31 @@ a {
   transition: left 0.5s;
 }
 
+/* Subtle center ripple on press */
+.btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.btn:active::after {
+  transition: transform 0.5s ease, opacity 0.8s ease;
+  transform: translate(-50%, -50%) scale(20);
+  opacity: 0;
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
 .btn:hover::before {
   left: 100%;
 }
@@ -235,33 +259,33 @@ a {
 .btn-primary {
   background: var(--btn-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
 }
 
 .btn-secondary {
   background: var(--btn-secondary);
   color: white;
-  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
 }
 
 .btn-secondary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(78, 205, 196, 0.6);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--balloon-blue);
-  border: 2px solid var(--balloon-blue);
+  color: var(--balloon-purple);
+  border: 2px solid var(--balloon-purple);
 }
 
 .btn-ghost:hover {
-  background: var(--balloon-blue);
+  background: var(--balloon-purple);
   color: white;
   transform: translateY(-2px);
 }
@@ -279,8 +303,8 @@ a {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--balloon-blue);
-  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+  border-color: var(--balloon-purple);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
   transform: translateY(-1px);
 }
 
@@ -328,7 +352,7 @@ a {
 }
 
 .nav a:hover {
-  color: var(--balloon-blue);
+  color: var(--balloon-purple);
 }
 
 .nav a::after {
@@ -338,7 +362,7 @@ a {
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--balloon-blue);
+  background: linear-gradient(90deg, var(--balloon-purple), var(--balloon-green));
   transition: width 0.3s ease;
 }
 
@@ -350,7 +374,7 @@ a {
 .brand {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--balloon-red);
+  color: var(--balloon-purple);
 }
 
 /* Muted text */
@@ -413,18 +437,46 @@ a {
 
 /* Special balloon festival elements */
 .balloon-accent {
-  background: linear-gradient(45deg, var(--balloon-red), var(--balloon-orange));
+  background: linear-gradient(45deg, var(--balloon-purple), var(--balloon-green));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .sky-gradient {
-  background: linear-gradient(135deg, var(--sky-blue), var(--sky-light));
+  background: linear-gradient(135deg, #dbeafe, #ede9fe);
 }
 
 .sunrise-gradient {
-  background: linear-gradient(135deg, var(--sunrise-orange), var(--sunset-pink));
+  background: linear-gradient(135deg, #ede9fe, #dcfce7);
+}
+
+/* Link button styling for interactive anchors */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--balloon-purple);
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+}
+
+.link-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--balloon-purple), var(--balloon-green));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.link-btn:hover::after {
+  transform: scaleX(1);
 }
 
 /* Enhanced hover effects for interactive elements */
