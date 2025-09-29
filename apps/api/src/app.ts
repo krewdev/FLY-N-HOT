@@ -43,9 +43,38 @@ const authLimiter = rateLimit({
 
 // Configure CORS based on environment
 const corsOptions = {
-  origin: env.NODE_ENV === 'production' 
-    ? ['https://your-domain.com', 'https://www.your-domain.com'] // Replace with actual domains
-    : ['http://localhost:3000', 'http://localhost:3001'], // Development origins
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = env.NODE_ENV === 'production' 
+      ? [
+          'https://fly-in-high.vercel.app',
+          'https://fly-in-high-*.vercel.app', // Preview deployments
+          /^https:\/\/fly-in-high-[a-z0-9]+-[a-z0-9]+\.vercel\.app$/, // Branch deployments
+          // Add your custom domain here when you have one:
+          // 'https://yourdomain.com',
+          // 'https://www.yourdomain.com'
+        ]
+      : ['http://localhost:3000', 'http://localhost:3001']; // Development origins
+    
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      if (allowed.includes('*')) {
+        const pattern = allowed.replace(/\*/g, '.*');
+        return new RegExp(`^${pattern}$`).test(origin);
+      }
+      return allowed === origin;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200, // For legacy browser support
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
