@@ -62,10 +62,6 @@ export default function PilotRegister() {
       setError('Password must be at least 8 characters long');
       return false;
     }
-    if (!formData.governmentIdFront || !formData.governmentIdBack || !formData.faaPilotLicense) {
-      setError('Please upload all required documents');
-      return false;
-    }
     return true;
   };
 
@@ -80,30 +76,22 @@ export default function PilotRegister() {
     }
 
     try {
-      // Create FormData for file uploads
-      const submitData = new FormData();
-      submitData.append('firstName', formData.firstName);
-      submitData.append('lastName', formData.lastName);
-      submitData.append('email', formData.email);
-      submitData.append('phoneNumber', formData.phoneNumber);
-      submitData.append('password', formData.password);
-      submitData.append('zipCode', formData.zipCode);
-      submitData.append('pilotLicenseNumber', formData.pilotLicenseNumber);
-      submitData.append('pilotLicenseState', formData.pilotLicenseState);
-      
-      if (formData.governmentIdFront) {
-        submitData.append('governmentIdFront', formData.governmentIdFront);
-      }
-      if (formData.governmentIdBack) {
-        submitData.append('governmentIdBack', formData.governmentIdBack);
-      }
-      if (formData.faaPilotLicense) {
-        submitData.append('faaPilotLicense', formData.faaPilotLicense);
-      }
+      // Align with API: POST /auth/pilot/register JSON
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        zipCode: formData.zipCode,
+        pilotLicenseNumber: formData.pilotLicenseNumber,
+        pilotLicenseState: formData.pilotLicenseState
+      };
 
-      const response = await fetch('/api/pilot/register', {
+      const response = await fetch('/api/auth/pilot/register', {
         method: 'POST',
-        body: submitData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {

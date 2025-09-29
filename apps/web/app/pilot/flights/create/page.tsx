@@ -59,10 +59,9 @@ export default function CreateFlight() {
     setError(null);
 
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
       const pilotIdDev = localStorage.getItem('pilotId_dev');
       const qs = pilotIdDev ? `?pilotId=${encodeURIComponent(pilotIdDev)}` : '';
-      const response = await fetch(base.replace(/\/$/, '') + `/pilots/flights${qs}`, {
+      const response = await fetch(`/api/pilots/flights${qs}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
