@@ -75,9 +75,8 @@ export default function NotifySignup({ initialSelectionType, initialSelectionId 
 		setLoading(true);
 		setError(null);
 
-		try {
-			const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-			const url = base.replace(/\/$/, '') + '/notifications/subscribe';
+    try {
+      const url = '/api/notifications/subscribe';
 			const payload = {
 				name: formData.name,
 				email: formData.email,

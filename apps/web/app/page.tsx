@@ -4,8 +4,7 @@ import Image from 'next/image';
 
 async function fetchFlights() {
   try {
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
-    const url = base.replace(/\/$/, '') + '/flights';
+    const url = '/api/flights';
     
     const res = await fetch(url, { 
       next: { revalidate: 10 },

@@ -24,8 +24,7 @@ export default function FlightDetailPage() {
     async function load() {
       setLoading(true);
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-        const url = base.replace(/\/$/, '') + `/flights/${params.flightId}`;
+        const url = `/api/flights/${params.flightId}`;
         const res = await fetch(url);
         if (res.ok) setFlight(await res.json());
       } finally {
@@ -39,8 +38,7 @@ export default function FlightDetailPage() {
     if (!flight) return;
     setStatus('Creating booking...');
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-      const url = base.replace(/\/$/, '') + `/bookings`;
+      const url = `/api/bookings`;
       // For demo, create a passenger placeholder id from email
       const passengerId = crypto.randomUUID();
       const res = await fetch(url, {
@@ -51,7 +49,7 @@ export default function FlightDetailPage() {
       const body = await res.json().catch(() => ({}));
       if (res.ok) {
         // If Stripe payment link is available for this flight, redirect to it
-        const flightRes = await fetch(base.replace(/\/$/, '') + `/flights/${flight.flightId}`);
+        const flightRes = await fetch(`/api/flights/${flight.flightId}`);
         if (flightRes.ok) {
           const fresh = await flightRes.json();
           if (fresh.stripePaymentLinkId && fresh.stripePaymentLinkUrl) {
