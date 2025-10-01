@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { AuthService } from '../services/authService.js';
 import { env } from '../config/env.js';
 import { prisma } from '../db.js';
 
@@ -18,21 +18,20 @@ declare global {
 
 export interface AuthRequest extends Request {}
 
-// Middleware to verify JWT token (placeholder implementation)
+// Middleware to verify JWT token
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
-  }
-
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+    const token = AuthService.extractTokenFromHeader(req.headers.authorization);
+
+    if (!token) {
+      return res.status(401).json({ error: 'Access token required' });
+    }
+
+    const payload = AuthService.verifyToken(token);
     
     // Verify user still exists
     const user = await prisma.user.findUnique({
-      where: { userId: decoded.userId },
+      where: { userId: payload.userId },
       include: { pilotProfile: true }
     });
 

@@ -4,8 +4,12 @@ import { FlightStatus } from '@prisma/client';
 import { prisma } from '../db.js';
 import { StripeService } from '../services/stripe.js';
 import { notifyPassengers } from '../services/notificationService.js';
+import { authenticateToken, requirePilot } from '../middleware/auth.js';
 
 export const router = Router();
+
+// Apply authentication middleware to all pilot routes
+router.use(authenticateToken, requirePilot);
 
 const createFlightSchema = z.object({
   // Accept any JSON for now to support address-based locations during dev
@@ -21,18 +25,14 @@ const createFlightSchema = z.object({
   description: z.string().max(1000).optional()
 });
 
-// In a real app, infer pilotId from auth token
+// Create a new flight
 router.post('/', async (req, res) => {
   const parsed = createFlightSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
 
-  // Temporary: get pilotId from query param until auth is implemented
-  const pilotId = req.pilotId || (typeof req.query.pilotId === 'string' ? req.query.pilotId : undefined);
-  if (!pilotId) {
-    return res.status(401).json({ error: 'Pilot authentication required. Provide pilotId in query param for now.' });
-  }
+  const pilotId = req.pilotId!; // Guaranteed by requirePilot middleware
 
-  // Validate pilotId exists and is a valid pilot
+  // Validate pilot is approved
   try {
     const pilot = await prisma.pilotProfile.findUnique({ where: { pilotId }, include: { user: true } });
     if (!pilot) {
@@ -82,19 +82,9 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  // Temporary: get pilotId from query param until auth is implemented
-  const pilotId = req.pilotId || (typeof req.query.pilotId === 'string' ? req.query.pilotId : undefined);
-  if (!pilotId) {
-    return res.status(401).json({ error: 'Pilot authentication required. Provide pilotId in query param for now.' });
-  }
+  const pilotId = req.pilotId!; // Guaranteed by requirePilot middleware
 
   try {
-    // Validate pilot exists
-    const pilot = await prisma.pilotProfile.findUnique({ where: { pilotId } });
-    if (!pilot) {
-      return res.status(404).json({ error: 'Pilot profile not found' });
-    }
-
     const flights = await prisma.flight.findMany({ 
       where: { pilotId }, 
       orderBy: { meetupTimestamp: 'asc' },
@@ -113,10 +103,7 @@ router.get('/', async (req, res) => {
 
 // Notify subscribers for a specific flight (pilot-triggered)
 router.post('/:flightId/notify', async (req, res) => {
-  const pilotId = req.pilotId || (typeof req.query.pilotId === 'string' ? req.query.pilotId : undefined);
-  if (!pilotId) {
-    return res.status(401).json({ error: 'Pilot authentication required. Provide pilotId in query param for now.' });
-  }
+  const pilotId = req.pilotId!; // Guaranteed by requirePilot middleware
   const { flightId } = req.params;
   try {
     // Ensure flight belongs to pilot
@@ -142,8 +129,7 @@ router.post('/:flightId/notify', async (req, res) => {
 // Stripe status for pilot
 router.get('/stripe-status', async (req, res) => {
   try {
-    const pilotId = req.pilotId || (typeof req.query.pilotId === 'string' ? req.query.pilotId : undefined);
-    if (!pilotId) return res.status(401).json({ error: 'Pilot authentication required' });
+    const pilotId = req.pilotId!; // Guaranteed by requirePilot middleware
     const status = await StripeService.getAccountStatus(pilotId);
     return res.json(status);
   } catch (err) {
@@ -155,8 +141,7 @@ router.get('/stripe-status', async (req, res) => {
 // Connect Stripe for pilot (returns onboarding link)
 router.post('/connect-stripe', async (req, res) => {
   try {
-    const pilotId = req.pilotId || (typeof req.query.pilotId === 'string' ? req.query.pilotId : undefined);
-    if (!pilotId) return res.status(401).json({ error: 'Pilot authentication required' });
+    const pilotId = req.pilotId!; // Guaranteed by requirePilot middleware
     const pilot = await prisma.pilotProfile.findUnique({ where: { pilotId }, include: { user: true } });
     if (!pilot) return res.status(404).json({ error: 'Pilot not found' });
     const result = await StripeService.createConnectAccount(pilotId, pilot.user.email);
